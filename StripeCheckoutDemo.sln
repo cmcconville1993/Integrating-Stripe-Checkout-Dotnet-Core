@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StripeCheckoutDemo", "StripeCheckoutDemo\StripeCheckoutDemo.csproj", "{805C7C2B-09A4-4B15-828B-6516C160BBA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StripeCheckoutDemoBlazorHybrid", "StripeCheckoutDemoBlazorHybrid\StripeCheckoutDemoBlazorHybrid.csproj", "{F47F0A51-DFD4-4560-AD42-172B853BA614}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{805C7C2B-09A4-4B15-828B-6516C160BBA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{805C7C2B-09A4-4B15-828B-6516C160BBA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{805C7C2B-09A4-4B15-828B-6516C160BBA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F47F0A51-DFD4-4560-AD42-172B853BA614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F47F0A51-DFD4-4560-AD42-172B853BA614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F47F0A51-DFD4-4560-AD42-172B853BA614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F47F0A51-DFD4-4560-AD42-172B853BA614}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

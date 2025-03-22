@@ -28,7 +28,7 @@
 @section scripts {
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        var stripe = Stripe('enter_publishable_key');
+        var stripe = Stripe('pk_test_51R5VHyG3aOdvMyTs3Gs04LjsA3hL7WIDA6AFQt0lJqdzyZOIPnmALNq92TcuL0LXZOzUaG2PqE9YK2a4LnyHNGH400CwZvdaHA');
 
         document.getElementById('checkout-button').addEventListener('click', function () {
             fetch('/checkout/create-checkout-session', {

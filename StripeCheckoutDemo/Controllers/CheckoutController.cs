@@ -25,23 +25,24 @@ namespace StripeCheckoutDemo.Controllers
             {
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>
-            {
-                new SessionLineItemOptions
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
+                    new SessionLineItemOptions
                     {
-                        Currency = model.Currency,
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Name = model.ProductName,
-                            Description = model.ProductDescription,
+                            Currency = model.Currency,
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = model.ProductName,
+                                Description = model.ProductDescription,
+                            },
+                            UnitAmount = model.Amount,
                         },
-                        UnitAmount = model.Amount,
+                        Quantity = 1,
                     },
-                    Quantity = 1,
                 },
-            },
                 Mode = "payment",
+                // UiMode = "embedded",
                 SuccessUrl = $"{Request.Scheme}://{Request.Host}/checkout/success",
                 CancelUrl = $"{Request.Scheme}://{Request.Host}/checkout/cancel",
             };
@@ -49,7 +50,7 @@ namespace StripeCheckoutDemo.Controllers
             var service = new SessionService();
             var session = service.Create(options);
 
-            return Ok(new { sessionId = session.Id });
+            return Ok(new { sessionId = session.Id, checkoutUrl = session.Url });
         }
 
         [HttpGet("success")]
