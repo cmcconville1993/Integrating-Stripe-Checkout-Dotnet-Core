@@ -1,0 +1,194 @@
+@using StripeCheckoutDemoBlazorHybrid.Components.Pages
+@page "/booking"
+
+@inject HttpClient Http
+
+
+<div class="booking-container">
+    <h3 class="booking-title">Book an Appointment</h3>
+
+    <div class="booking-steps">
+        <div class="step @(currentStep == 1 ? "active" : "")">
+            <span class="step-number">1</span>
+            <span class="step-text">Select Date</span>
+        </div>
+        <div class="step @(currentStep == 2 ? "active" : "")">
+            <span class="step-number">2</span>
+            <span class="step-text">Choose Time</span>
+        </div>
+        <div class="step @(currentStep == 3 ? "active" : "")">
+            <span class="step-number">3</span>
+            <span class="step-text">Confirm</span>
+        </div>
+    </div>
+
+    @if (currentStep == 1)
+    {
+        <div class="calendar-section">
+            <div class="month-navigation">
+                <button class="nav-button" @onclick="PreviousMonth">
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+                </button>
+                <h4>@currentDate.ToString("MMMM yyyy")</h4>
+                <button class="nav-button" @onclick="NextMonth">
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+            <div class="calendar">
+                <div class="weekdays">
+                    @foreach (var day in new[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" })
+                    {
+                        <div class="weekday">@day</div>
+                    }
+                </div>
+                <div class="days">
+                    @for (int i = 0; i < firstDayOfMonth; i++)
+                    {
+                        <div class="day empty"></div>
+                    }
+                    @for (int i = 1; i <= daysInMonth; i++)
+                    {
+                        var date = new DateTime(currentDate.Year, currentDate.Month, i);
+                        var isDisabled = date < DateTime.Today;
+                        var isSelected = selectedDate?.Date == date.Date;
+                        <div class="day @(isDisabled ? "disabled" : "") @(isSelected ? "selected" : "")"
+                             @onclick="() => SelectDate(date)" 
+                             style="@(isDisabled ? "pointer-events: none;" : "")">
+                            @i
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else if (currentStep == 2)
+    {
+        <div class="time-slots">
+            <h4>Available Times for @selectedDate?.ToString("dddd, MMMM d, yyyy")</h4>
+            <div class="time-grid">
+                @foreach (var time in availableTimes)
+                {
+                    <button class="time-slot @(selectedTime == time ? "selected" : "")"
+                            @onclick="() => SelectTime(time)">
+                        @time.ToString("h:mm tt")
+                    </button>
+                }
+            </div>
+        </div>
+    }
+    else if (currentStep == 3)
+    {
+        <div class="confirmation-section">
+            <h4>Confirm Your Booking</h4>
+            <div class="booking-summary">
+                <div class="summary-item">
+                    <span class="label">Date:</span>
+                    <span class="value">@selectedDate?.ToString("dddd, MMMM d, yyyy")</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Time:</span>
+                    <span class="value">@selectedTime.ToString("h:mm tt")</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Amount:</span>
+                    <span class="value">£50.00</span>
+                </div>
+            </div>
+            
+            <StripePayment 
+                Amount="5000"
+                Description="@BookingDescription"
+                OnPaymentComplete="HandlePaymentComplete" />
+        </div>
+    }
+
+    <div class="navigation-buttons">
+        @if (currentStep > 1)
+        {
+            <button class="nav-btn back" @onclick="PreviousStep">Back</button>
+        }
+        @if (currentStep < 3 && ((currentStep == 1 && selectedDate != null) || (currentStep == 2 && selectedTime != default)))
+        {
+            <button class="nav-btn next" @onclick="NextStep">Next</button>
+        }
+    </div>
+</div>
+
+@code {
+    private int currentStep = 1;
+    private DateTime currentDate = DateTime.Today;
+    private DateTime? selectedDate;
+    private DateTime selectedTime;
+    private int firstDayOfMonth => new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek.GetHashCode();
+    private int daysInMonth => DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+    
+    private List<DateTime> availableTimes = new();
+
+    private string BookingDescription => $"Booking for {selectedDate?.ToString("dddd, MMMM d, yyyy")} at {selectedTime.ToString("h:mm tt")}";
+
+    protected override void OnInitialized()
+    {
+        // Example time slots - you would typically load these from a service
+        var baseTime = DateTime.Today.AddHours(9); // Start at 9 AM
+        for (int i = 0; i < 16; i++) // 9 AM to 5 PM
+        {
+            availableTimes.Add(baseTime.AddMinutes(i * 30)); // 30-minute intervals
+        }
+    }
+
+    private void PreviousMonth()
+    {
+        // Don't allow selecting months in the past
+        var previousMonth = currentDate.AddMonths(-1);
+        if (previousMonth.Month >= DateTime.Today.Month && previousMonth.Year >= DateTime.Today.Year)
+        {
+            currentDate = previousMonth;
+        }
+    }
+
+    private void NextMonth()
+    {
+        // Limit future booking to 6 months ahead
+        var nextMonth = currentDate.AddMonths(1);
+        if (nextMonth < DateTime.Today.AddMonths(6))
+        {
+            currentDate = nextMonth;
+        }
+    }
+
+    private void SelectDate(DateTime date)
+    {
+        selectedDate = date;
+    }
+
+    private void SelectTime(DateTime time)
+    {
+        selectedTime = time;
+    }
+
+    private void NextStep()
+    {
+        if (currentStep < 3)
+        {
+            currentStep++;
+        }
+    }
+
+    private void PreviousStep()
+    {
+        if (currentStep > 1)
+        {
+            currentStep--;
+        }
+    }
+
+    private async Task HandlePaymentComplete(string paymentIntentId)
+    {
+        // Handle successful payment
+        // Save booking details to your database
+        // Show success message
+        // Redirect to confirmation page
+    }
+} 
