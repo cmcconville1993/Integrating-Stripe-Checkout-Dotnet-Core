@@ -151,5 +151,33 @@ namespace StripeCheckoutDemo.Controllers
                 </html>
             ", "text/html");
         }
+
+        // [HttpPost("create-payment-intent")]
+        // public IActionResult CreatePaymentIntent([FromBody] PaymentIntentRequest model)
+        // {
+        //     StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
+
+        //     var options = new PaymentIntentCreateOptions
+        //     {
+        //         Amount = (long)(model.Amount * 100), // Convert to cents
+        //         Currency = "gbp",
+        //         Description = model.Description,
+        //         AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+        //         {
+        //             Enabled = true,
+        //         },
+        //     };
+
+        //     var service = new PaymentIntentService();
+        //     var intent = service.Create(options);
+
+        //     return Ok(new { clientSecret = intent.ClientSecret });
+        // }
+
+        // public class PaymentIntentRequest
+        // {
+        //     public decimal Amount { get; set; }
+        //     public string Description { get; set; }
+        // }
     }
 }

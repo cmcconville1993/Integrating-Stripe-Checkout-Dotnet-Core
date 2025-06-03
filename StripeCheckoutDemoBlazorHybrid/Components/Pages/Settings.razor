@@ -1,0 +1,99 @@
+@page "/settings"
+
+<h3 class="settings-title">User Settings</h3>
+
+<div class="form-group">
+    <label for="displayName">Display Name</label>
+    <input id="displayName" class="form-control" @bind="settings.DisplayName" placeholder="Enter your display name" />
+</div>
+
+<div class="form-group">
+    <label for="email">Email Address</label>
+    <input id="email" type="email" class="form-control" @bind="settings.Email" placeholder="Enter your email" />
+</div>
+
+<div class="form-group">
+    <label for="defaultCurrency">Default Currency</label>
+    <select id="defaultCurrency" class="form-control" @bind="settings.DefaultCurrency">
+        <option value="GBP">GBP</option>
+        <option value="EUR">EUR</option>
+        <option value="USD">USD</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="checkbox-container">
+        <input type="checkbox" @bind="settings.EmailNotifications" />
+        <span class="checkbox-label">Enable Email Notifications</span>
+    </label>
+</div>
+
+<button class="btn btn-primary btn-lg btn-block save-button" @onclick="SaveSettings">
+    <i class="bi bi-save me-2"></i>
+    Save Settings
+</button>
+
+<style>
+    .settings-title {
+        text-align: center;
+        color: #32325d;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .checkbox-label {
+        color: #525f7f;
+    }
+
+    .save-button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        background: #5469d4;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+    }
+
+    .save-button:hover {
+        background: #4456c7;
+    }
+</style>
+
+@code {
+    private UserSettings settings = new()
+    {
+        DisplayName = "",
+        Email = "",
+        DefaultCurrency = "USD",
+        EmailNotifications = true
+    };
+
+    private async Task SaveSettings()
+    {
+        // TODO: Implement settings save functionality
+        // You would typically save these settings to a database or local storage
+        await Task.Delay(100); // Placeholder for actual save operation
+    }
+
+    private class UserSettings
+    {
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
+        public string DefaultCurrency { get; set; }
+        public bool EmailNotifications { get; set; }
+    }
+}

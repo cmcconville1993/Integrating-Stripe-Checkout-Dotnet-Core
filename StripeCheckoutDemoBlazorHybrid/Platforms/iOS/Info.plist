@@ -29,10 +29,26 @@
     <key>XSAppIconAssets</key>
     <string>Assets.xcassets/appicon.appiconset</string>
     <key>CFBundleURLName</key>
-        <string>com.yourcompany.yourmauiapp</string>
+        <!-- <string>com.yourcompany.yourmauiapp</string>
         <key>CFBundleURLSchemes</key>
         <array>
             <string>yourmauiapp</string>
-        </array>
+        </array> -->
+    <string>com.yourcompany.yourmauiapp</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+        <string>yourmauiapp</string>
+    </array>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>stripecheckout</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string>com.yourcompany.stripecheckout</string>
+        </dict>
+    </array>
 </dict>
 </plist>

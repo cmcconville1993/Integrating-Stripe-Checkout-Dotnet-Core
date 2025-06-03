@@ -5,15 +5,132 @@
 Welcome to your new app. *@
 
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
-<h3>Stripe Checkout</h3>
+<div>
+    <h3 class="checkout-title">Stripe Checkout</h3>
 
-<input @bind="checkoutForm.ProductName" placeholder="Product Name" />
-<input @bind="checkoutForm.ProductDescription" placeholder="Product Description" />
-<input @bind="checkoutForm.Amount" type="number" placeholder="Amount" />
-<input @bind="checkoutForm.Currency" placeholder="Currency" />
+    <div class="form-group">
+        <label for="productName">Product Name</label>
+        <input id="productName" class="form-control" @bind="checkoutForm.ProductName" placeholder="Enter product name" />
+    </div>
 
-<button @onclick="StartCheckout">Pay with Stripe</button>
+    <div class="form-group">
+        <label for="productDesc">Product Description</label>
+        <textarea id="productDesc" class="form-control" @bind="checkoutForm.ProductDescription" placeholder="Enter product description" rows="3"></textarea>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="amount">Amount</label>
+            <div class="input-group">
+                <input id="amount" class="form-control" @bind="checkoutForm.Amount" type="number" min="0" step="100" placeholder="Enter amount" />
+                <div class="input-group-append">
+                    <span class="input-group-text">cents</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group col">
+            <label for="currency">Currency</label>
+            <select id="currency" class="form-control" @bind="checkoutForm.Currency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn btn-primary btn-lg btn-block checkout-button" @onclick="StartCheckout" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        else
+        {
+            <i class="bi bi-credit-card me-2"></i>
+        }
+        @(isLoading ? "Processing..." : "Proceed to Payment")
+    </button>
+</div>
+
+<style>
+    .checkout-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        background: white;
+    }
+
+    .checkout-title {
+        text-align: center;
+        color: #32325d;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        transition: border-color 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+        border-color: #6772e5;
+        outline: none;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #525f7f;
+        font-weight: 500;
+    }
+
+    .checkout-button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        background: #5469d4;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+    }
+
+    .checkout-button:hover {
+        background: #4456c7;
+    }
+
+    .input-group {
+        display: flex;
+        align-items: stretch;
+    }
+
+    .input-group-text {
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-left: none;
+        border-radius: 0 4px 4px 0;
+        color: #525f7f;
+    }
+</style>
 
 <p>@responseMessage</p>
 
@@ -28,18 +145,22 @@ Welcome to your new app. *@
 
     private string responseMessage = "Waiting for response...";
 
+    private bool isLoading = false;
+
     private async Task StartCheckout()
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("checkout/create-checkout-session", checkoutForm);
+            isLoading = true;
+            StateHasChanged();
+
+            var response = await Http.PostAsJsonAsync("checkout/create-checkout-session-maui", checkoutForm);
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<CheckoutResponse>();
-                @* string stripeUrl = $"https://checkout.stripe.com/c/pay/{result.sessionId}"; *@
                 string stripeUrl = $"{result.checkoutUrl}";
 
-                await Launcher.OpenAsync(stripeUrl); // Open Stripe Checkout
+                await Launcher.OpenAsync(stripeUrl);
                 responseMessage = "Redirecting to Stripe...";
             }
             else
@@ -50,6 +171,11 @@ Welcome to your new app. *@
         catch (Exception ex)
         {
             responseMessage = "Exception: " + ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
         }
     }
 
@@ -67,4 +193,51 @@ Welcome to your new app. *@
         public string returnUrl { get; set; }
         public string checkoutUrl { get; set; }
     }
+
+    @* protected override void OnInitialized()
+    {
+        // Register for URL scheme handling
+        Microsoft.Maui.ApplicationModel.AppActions.OnAppAction += OnAppAction;
+        
+        // Also register for deep linking
+        Microsoft.Maui.ApplicationModel.AppActions.OnAppAction += OnDeepLink;
+    }
+
+    private void OnAppAction(object sender, AppActionEventArgs args)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (args.AppAction.Id == "success")
+            {
+                NavigationManager.NavigateTo("/payment-success");
+            }
+            else if (args.AppAction.Id == "cancel")
+            {
+                responseMessage = "Payment cancelled";
+                StateHasChanged();
+            }
+        });
+    }
+
+    private void OnDeepLink(object sender, AppActionEventArgs args)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (args.AppAction.Id.StartsWith("success"))
+            {
+                NavigationManager.NavigateTo("/payment-success");
+            }
+            else if (args.AppAction.Id == "cancel")
+            {
+                responseMessage = "Payment cancelled";
+                StateHasChanged();
+            }
+        });
+    }
+
+    public void Dispose()
+    {
+        Microsoft.Maui.ApplicationModel.AppActions.OnAppAction -= OnAppAction;
+        Microsoft.Maui.ApplicationModel.AppActions.OnAppAction -= OnDeepLink;
+    } *@
 }

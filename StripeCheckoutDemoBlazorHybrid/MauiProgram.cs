@@ -40,6 +40,12 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+		// builder.ConfigureEssentials(essentials =>
+		// {
+		// 	essentials.AddAppAction("success", "Payment Success", "Payment was successful");
+		// 	essentials.AddAppAction("cancel", "Payment Cancelled", "Payment was cancelled");
+		// });
+
 		return builder.Build();
 	}
 }
