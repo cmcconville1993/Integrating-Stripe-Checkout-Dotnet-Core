@@ -1,0 +1,97 @@
+@page "/exercises"
+
+<div class="container">
+    <h3 class="mb-4">Exercise Tracker</h3>
+
+    <div class="d-flex flex-column gap-4">
+        @foreach (var exercise in exercises)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@exercise.Name</h5>
+                    <div class="sets-container">
+                        @for (int i = 0; i < exercise.Sets.Count; i++)
+                        {
+                            var set = exercise.Sets[i];
+                            <div class="set-row mb-3">
+                                <div class="d-flex flex-column">
+                                    <label class="mb-1">Set @(i + 1)</label>
+                                    <div class="d-flex gap-3">
+                                        <div class="flex-grow-1">
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" @bind="set.Weight" placeholder="Weight" />
+                                                <span class="input-group-text">kg</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <input type="number" class="form-control" @bind="set.Reps" placeholder="Reps" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="() => AddSet(exercise)">Add Set</button>
+                        @if (exercise.Sets.Count > 2)
+                        {
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveSet(exercise)">Remove Set</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Exercise> exercises = new();
+
+    protected override void OnInitialized()
+    {
+        // Initialize exercises in specific order
+        exercises = new List<Exercise>
+        {
+            new Exercise { Name = "Bench Press" },
+            new Exercise { Name = "Squats" },
+            new Exercise { Name = "Deadlift" }
+        };
+
+        // Initialize each exercise with 3 sets
+        foreach (var exercise in exercises)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                exercise.Sets.Add(new ExerciseSet());
+            }
+        }
+    }
+
+    private void AddSet(Exercise exercise)
+    {
+        if (exercise.Sets.Count < 5)
+        {
+            exercise.Sets.Add(new ExerciseSet());
+        }
+    }
+
+    private void RemoveSet(Exercise exercise)
+    {
+        if (exercise.Sets.Count > 2)
+        {
+            exercise.Sets.RemoveAt(exercise.Sets.Count - 1);
+        }
+    }
+
+    public class Exercise
+    {
+        public string Name { get; set; } = "";
+        public List<ExerciseSet> Sets { get; set; } = new();
+    }
+
+    public class ExerciseSet
+    {
+        public int Weight { get; set; }
+        public int Reps { get; set; }
+    }
+} 
