@@ -6,11 +6,23 @@
 <div class="booking-container">
     <div class="day-navigation">
         <button class="nav-btn" @onclick="PreviousDay" disabled="@(selectedDate.Date <= DateTime.Now.Date)">
-            <i class="bi bi-chevron-left"></i>
+            <i class="bi bi-chevron-double-left"></i> Previous Day
         </button>
-        <h3 class="current-day">@selectedDate.ToString("dddd, MMMM d, yyyy")</h3>
-        <button class="nav-btn" @onclick="NextDay">
-            <i class="bi bi-chevron-right"></i>
+        <div class="date-display">
+            <h3 class="current-day">@selectedDate.ToString("dddd, MMMM d, yyyy")</h3>
+            <div class="date-indicator">
+                @if (selectedDate.Date == DateTime.Now.Date)
+                {
+                    <span class="today-badge">Today</span>
+                }
+                else if (selectedDate.Date == DateTime.Now.Date.AddDays(1))
+                {
+                    <span class="tomorrow-badge">Tomorrow</span>
+                }
+            </div>
+        </div>
+        <button class="nav-btn" @onclick="NextDay" disabled="@(selectedDate.Date >= DateTime.Now.Date.AddDays(7))">
+            Next Day <i class="bi bi-chevron-double-right"></i>
         </button>
     </div>
 
@@ -64,53 +76,65 @@
     private void LoadClasses()
     {
         // Sample data - replace with actual API call
-        classes = new List<ClassInfo>
+        classes = new List<ClassInfo>();
+
+        // Only add classes for weekdays
+        if (selectedDate.DayOfWeek != DayOfWeek.Saturday && selectedDate.DayOfWeek != DayOfWeek.Sunday)
         {
-            new ClassInfo 
-            { 
-                Name = "Morning Yoga", 
-                Time = selectedDate.Date.AddHours(8), 
-                Instructor = "Sarah Johnson",
-                CurrentBookings = 7,
-                MaxCapacity = 12
-            },
-            new ClassInfo 
-            { 
-                Name = "HIIT Training", 
-                Time = selectedDate.Date.AddHours(10), 
-                Instructor = "Mike Smith",
-                CurrentBookings = 5,
-                MaxCapacity = 15
-            },
-            new ClassInfo 
-            { 
-                Name = "Pilates", 
-                Time = selectedDate.Date.AddHours(14), 
-                Instructor = "Emma Davis",
-                CurrentBookings = 3,
-                MaxCapacity = 10
-            },
-            new ClassInfo 
-            { 
-                Name = "Evening Yoga", 
-                Time = selectedDate.Date.AddHours(18), 
-                Instructor = "John Wilson",
-                CurrentBookings = 12,
-                MaxCapacity = 12
-            }
-        };
+            classes.AddRange(new[]
+            {
+                new ClassInfo 
+                { 
+                    Name = "Morning Yoga", 
+                    Time = selectedDate.Date.AddHours(8), 
+                    Instructor = "Sarah Johnson",
+                    CurrentBookings = 7,
+                    MaxCapacity = 12
+                },
+                new ClassInfo 
+                { 
+                    Name = "HIIT Training", 
+                    Time = selectedDate.Date.AddHours(10), 
+                    Instructor = "Mike Smith",
+                    CurrentBookings = 5,
+                    MaxCapacity = 15
+                },
+                new ClassInfo 
+                { 
+                    Name = "Pilates", 
+                    Time = selectedDate.Date.AddHours(14), 
+                    Instructor = "Emma Davis",
+                    CurrentBookings = 3,
+                    MaxCapacity = 10
+                },
+                new ClassInfo 
+                { 
+                    Name = "Evening Yoga", 
+                    Time = selectedDate.Date.AddHours(18), 
+                    Instructor = "John Wilson",
+                    CurrentBookings = 12,
+                    MaxCapacity = 12
+                }
+            });
+        }
     }
 
     private void PreviousDay()
     {
-        selectedDate = selectedDate.AddDays(-1);
-        LoadClasses();
+        if (selectedDate.Date > DateTime.Now.Date)
+        {
+            selectedDate = selectedDate.AddDays(-1);
+            LoadClasses();
+        }
     }
 
     private void NextDay()
     {
-        selectedDate = selectedDate.AddDays(1);
-        LoadClasses();
+        if (selectedDate.Date < DateTime.Now.Date.AddDays(7))
+        {
+            selectedDate = selectedDate.AddDays(1);
+            LoadClasses();
+        }
     }
 
     private void ToggleBooking(ClassInfo classInfo)
