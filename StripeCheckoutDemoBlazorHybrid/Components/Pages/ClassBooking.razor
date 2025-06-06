@@ -1,0 +1,139 @@
+@page "/class-booking"
+@using System
+@using System.Collections.Generic
+@using Microsoft.Maui.ApplicationModel
+
+<div class="booking-container">
+    <div class="day-navigation">
+        <button class="nav-btn" @onclick="PreviousDay" disabled="@(selectedDate.Date <= DateTime.Now.Date)">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <h3 class="current-day">@selectedDate.ToString("dddd, MMMM d, yyyy")</h3>
+        <button class="nav-btn" @onclick="NextDay">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+
+    <div class="classes-container">
+        @if (classes.Count == 0)
+        {
+            <div class="no-classes">
+                <i class="bi bi-calendar-x"></i>
+                <p>No classes available for this day</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var classInfo in classes)
+            {
+                <div class="class-card @(classInfo.IsBooked ? "booked" : "")">
+                    <div class="class-time">
+                        <h4>@classInfo.Time.ToString("h:mm tt")</h4>
+                        <span class="class-name">@classInfo.Name</span>
+                    </div>
+                    <div class="class-details">
+                        <div class="capacity">
+                            <i class="bi bi-people"></i>
+                            <span>@classInfo.CurrentBookings/@classInfo.MaxCapacity</span>
+                        </div>
+                        <div class="instructor">
+                            <i class="bi bi-person"></i>
+                            <span>@classInfo.Instructor</span>
+                        </div>
+                    </div>
+                    <button class="book-btn @(classInfo.IsBooked ? "cancel" : "")"
+                            @onclick="() => ToggleBooking(classInfo)"
+                            disabled="@(!classInfo.IsBooked && classInfo.CurrentBookings >= classInfo.MaxCapacity)">
+                        @(classInfo.IsBooked ? "Cancel Booking" : "Book Class")
+                    </button>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private DateTime selectedDate = DateTime.Now;
+    private List<ClassInfo> classes = new();
+
+    protected override void OnInitialized()
+    {
+        LoadClasses();
+    }
+
+    private void LoadClasses()
+    {
+        // Sample data - replace with actual API call
+        classes = new List<ClassInfo>
+        {
+            new ClassInfo 
+            { 
+                Name = "Morning Yoga", 
+                Time = selectedDate.Date.AddHours(8), 
+                Instructor = "Sarah Johnson",
+                CurrentBookings = 7,
+                MaxCapacity = 12
+            },
+            new ClassInfo 
+            { 
+                Name = "HIIT Training", 
+                Time = selectedDate.Date.AddHours(10), 
+                Instructor = "Mike Smith",
+                CurrentBookings = 5,
+                MaxCapacity = 15
+            },
+            new ClassInfo 
+            { 
+                Name = "Pilates", 
+                Time = selectedDate.Date.AddHours(14), 
+                Instructor = "Emma Davis",
+                CurrentBookings = 3,
+                MaxCapacity = 10
+            },
+            new ClassInfo 
+            { 
+                Name = "Evening Yoga", 
+                Time = selectedDate.Date.AddHours(18), 
+                Instructor = "John Wilson",
+                CurrentBookings = 12,
+                MaxCapacity = 12
+            }
+        };
+    }
+
+    private void PreviousDay()
+    {
+        selectedDate = selectedDate.AddDays(-1);
+        LoadClasses();
+    }
+
+    private void NextDay()
+    {
+        selectedDate = selectedDate.AddDays(1);
+        LoadClasses();
+    }
+
+    private void ToggleBooking(ClassInfo classInfo)
+    {
+        if (classInfo.IsBooked)
+        {
+            classInfo.IsBooked = false;
+            classInfo.CurrentBookings--;
+        }
+        else
+        {
+            classInfo.IsBooked = true;
+            classInfo.CurrentBookings++;
+        }
+    }
+
+    public class ClassInfo
+    {
+        public string Name { get; set; } = "";
+        public DateTime Time { get; set; }
+        public string Instructor { get; set; } = "";
+        public int CurrentBookings { get; set; }
+        public int MaxCapacity { get; set; }
+        public bool IsBooked { get; set; }
+    }
+} 
