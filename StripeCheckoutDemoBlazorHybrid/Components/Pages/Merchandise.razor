@@ -1,0 +1,93 @@
+@page "/merchandise"
+
+<div class="container">
+    <h3 class="mb-4">Gym Merchandise</h3>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in merchandise)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">@item.Description</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0">$@item.Price.ToString("F2")</span>
+                            <button class="btn btn-primary" @onclick="() => BuyItem(item)">
+                                <i class="bi bi-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<MerchItem> merchandise = new();
+
+    protected override void OnInitialized()
+    {
+        merchandise = new List<MerchItem>
+        {
+            new MerchItem
+            {
+                Name = "Gym T-Shirt",
+                Description = "Premium cotton t-shirt with our gym logo. Available in multiple sizes.",
+                Price = 29.99m,
+                ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop&q=60"
+            },
+            new MerchItem
+            {
+                Name = "Training Hoodie",
+                Description = "Comfortable hoodie perfect for pre and post workout. Features side pockets and adjustable hood.",
+                Price = 49.99m,
+                ImageUrl = "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&auto=format&fit=crop&q=60"
+            },
+            new MerchItem
+            {
+                Name = "Gym Bag",
+                Description = "Spacious gym bag with multiple compartments. Perfect for carrying your workout gear.",
+                Price = 39.99m,
+                ImageUrl = "https://images.unsplash.com/photo-1591085686350-798c0f9faa7f?w=500&auto=format&fit=crop&q=60"
+            },
+            new MerchItem
+            {
+                Name = "Water Bottle",
+                Description = "Insulated water bottle that keeps your drinks cold for 24 hours.",
+                Price = 19.99m,
+                ImageUrl = "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=60"
+            },
+            new MerchItem
+            {
+                Name = "Training Towel",
+                Description = "Quick-drying microfiber towel. Perfect for your workout sessions.",
+                Price = 14.99m,
+                ImageUrl = "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=500&auto=format&fit=crop&q=60"
+            },
+            new MerchItem
+            {
+                Name = "Gym Cap",
+                Description = "Adjustable cap with our gym logo. Perfect for outdoor workouts.",
+                Price = 24.99m,
+                ImageUrl = "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&auto=format&fit=crop&q=60"
+            }
+        };
+    }
+
+    private void BuyItem(MerchItem item)
+    {
+        // TODO: Implement Stripe checkout integration
+        Console.WriteLine($"Buying item: {item.Name}");
+    }
+
+    public class MerchItem
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public decimal Price { get; set; }
+        public string ImageUrl { get; set; } = "";
+    }
+} 
