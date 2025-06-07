@@ -1,62 +1,98 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Booking</a>
+﻿@using Microsoft.AspNetCore.Components.Routing
+
+<div class="nav-container">
+    <div class="nav-brand">
+        @* <i class="bi bi-heart-pulse"></i> *@
+        <span>FitTrack</span>
     </div>
-</div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <nav class="nav-menu">
+        <div class="nav-section">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span>Home</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="exercises">
+                    @* <i class="bi bi-activity"></i> *@
+                    <span>Tracker</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="class-booking">
+                    @* <i class="bi bi-calendar-check"></i> *@
+                    @* <span>Class Booking</span> *@
+                    <span>Booking</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="events">
+                    @* <i class="bi bi-trophy"></i> *@
+                    <span>Events</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="merchandise">
+                    @* <i class="bi bi-bag"></i> *@
+                    <span>Merchandise</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="settings">
+                    @* <i class="bi bi-gear"></i> *@
+                    <span>Settings</span>
+                </NavLink>
+            </div>
+        </div>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        @* <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
+        @* <div class="nav-section">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="events">
+                    <span>Events</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="merchandise">
+                    <span>Merchandise</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="settings">
+                    <span>Settings</span>
+                </NavLink>
+            </div>
         </div> *@
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="settings">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
-            </NavLink>
-        </div>
-        @* <div class="nav-item px-3">
-            <NavLink class="nav-link" href="booking">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Booking
-            </NavLink>
-        </div> *@
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="exercises">
-                <i class="bi bi-activity"></i> Exercise Tracker
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="class-booking">
-                <i class="bi bi-calendar-check"></i> Class Booking
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="events">
-                <i class="bi bi-trophy"></i> Events
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="merchandise">
-                <span class="bi bi-bag" aria-hidden="true"></span> Merchandise
-            </NavLink>
-        </div>
-        @* <div class="nav-item px-3">
-            <NavLink class="nav-link" href="signin">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Sign in
-            </NavLink>
+
+        @* <div class="nav-section">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="settings">
+                    <span>Settings</span>
+                </NavLink>
+            </div>
         </div> *@
     </nav>
 </div>
+
+<style>
+    .nav-link {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        color: #666 !important;
+        text-decoration: none !important;
+    }
+
+    .nav-link span {
+        display: inline-block !important;
+        color: inherit !important;
+    }
+
+    .nav-link.active {
+        color: #007bff !important;
+    }
+
+    .nav-link:hover {
+        color: #007bff !important;
+    }
+</style>
