@@ -1,0 +1,114 @@
+@page "/events"
+@using System
+@using System.Collections.Generic
+
+<div class="events-container">
+    <h2 class="page-title">Upcoming Events</h2>
+    
+    <div class="events-grid">
+        @foreach (var evt in events)
+        {
+            <div class="event-card @(evt.IsAttending ? "attending" : "")">
+                <div class="event-image">
+                    <img src="@evt.ImageUrl" alt="@evt.Name" />
+                    @if (evt.IsAttending)
+                    {
+                        <div class="attending-badge">
+                            <i class="bi bi-check-circle"></i> Attending
+                        </div>
+                    }
+                </div>
+                
+                <div class="event-content">
+                    <h3 class="event-name">@evt.Name</h3>
+                    <div class="event-details">
+                        <div class="event-info">
+                            <i class="bi bi-calendar"></i>
+                            <span>@evt.Date.ToString("dddd, MMMM d, yyyy")</span>
+                        </div>
+                        <div class="event-info">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>@evt.Location</span>
+                        </div>
+                        <div class="event-info">
+                            <i class="bi bi-people"></i>
+                            <span>@evt.Attendees.Count attendees</span>
+                        </div>
+                    </div>
+                    <p class="event-description">@evt.Description</p>
+                    <button class="attend-btn @(evt.IsAttending ? "attending" : "")"
+                            @onclick="() => ToggleAttendance(evt)">
+                        @(evt.IsAttending ? "Cancel Attendance" : "Attend Event")
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Event> events = new();
+
+    protected override void OnInitialized()
+    {
+        LoadEvents();
+    }
+
+    private void LoadEvents()
+    {
+        events = new List<Event>
+        {
+            new Event
+            {
+                Name = "Belfast City Marathon",
+                Date = new DateTime(2024, 5, 5),
+                Location = "Belfast, Northern Ireland",
+                Description = "Join thousands of runners in the annual Belfast City Marathon. Experience the vibrant city streets and enjoy the incredible atmosphere of Northern Ireland's biggest running event.",
+                ImageUrl = "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                Attendees = new List<string> { "John D.", "Sarah M.", "Mike R." }
+            },
+            new Event
+            {
+                Name = "HYROX Berlin",
+                Date = new DateTime(2024, 6, 15),
+                Location = "Berlin, Germany",
+                Description = "Challenge yourself in this unique fitness competition combining running and functional workouts. HYROX is the world's first fitness competition for everybody.",
+                ImageUrl = "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                Attendees = new List<string> { "Emma W.", "David K." }
+            },
+            new Event
+            {
+                Name = "Portadown Half Marathon",
+                Date = new DateTime(2024, 7, 20),
+                Location = "Portadown, Northern Ireland",
+                Description = "Experience the beautiful countryside of County Armagh in this challenging half marathon. Perfect for both seasoned runners and those looking to complete their first half marathon.",
+                ImageUrl = "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                Attendees = new List<string> { "Lisa P.", "Tom B.", "Rachel M." }
+            }
+        };
+    }
+
+    private void ToggleAttendance(Event evt)
+    {
+        evt.IsAttending = !evt.IsAttending;
+        if (evt.IsAttending)
+        {
+            evt.Attendees.Add("You");
+        }
+        else
+        {
+            evt.Attendees.Remove("You");
+        }
+    }
+
+    public class Event
+    {
+        public string Name { get; set; } = "";
+        public DateTime Date { get; set; }
+        public string Location { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ImageUrl { get; set; } = "";
+        public List<string> Attendees { get; set; } = new();
+        public bool IsAttending { get; set; }
+    }
+} 
