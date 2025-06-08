@@ -1,4 +1,6 @@
 @page "/merchandise"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <div class="container">
     <h3 class="mb-4">Gym Merchandise</h3>
@@ -14,8 +16,16 @@
                         <p class="card-text">@item.Description</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="h5 mb-0">$@item.Price.ToString("F2")</span>
-                            <button class="btn btn-primary" @onclick="() => BuyItem(item)">
-                                <i class="bi bi-cart-plus"></i> Add to Cart
+                            <button class="btn btn-primary" @onclick="() => BuyItem(item)" disabled="@isLoading">
+                                @if (isLoading)
+                                {
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-cart-plus"></i>
+                                }
+                                @(isLoading ? "Processing..." : "Add to Cart")
                             </button>
                         </div>
                     </div>
@@ -25,8 +35,17 @@
     </div>
 </div>
 
+@if (!string.IsNullOrEmpty(responseMessage))
+{
+    <div class="alert alert-info mt-3" role="alert">
+        @responseMessage
+    </div>
+}
+
 @code {
     private List<MerchItem> merchandise = new();
+    private bool isLoading = false;
+    private string responseMessage = "";
 
     protected override void OnInitialized()
     {
@@ -77,10 +96,45 @@
         };
     }
 
-    private void BuyItem(MerchItem item)
+    private async Task BuyItem(MerchItem item)
     {
-        // TODO: Implement Stripe checkout integration
-        Console.WriteLine($"Buying item: {item.Name}");
+        try
+        {
+            isLoading = true;
+            responseMessage = "Processing your order...";
+            StateHasChanged();
+
+            var checkoutForm = new StripeCheckoutDemo.Models.CheckoutFormModel
+            {
+                ProductName = item.Name,
+                ProductDescription = item.Description,
+                Amount = (long)(item.Price * 100), // Convert to cents
+                Currency = "GBP"
+            };
+
+            var response = await Http.PostAsJsonAsync("checkout/create-checkout-session-maui", checkoutForm);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CheckoutResponse>();
+                string stripeUrl = $"{result.checkoutUrl}";
+
+                await Launcher.OpenAsync(stripeUrl);
+                responseMessage = "Redirecting to Stripe...";
+            }
+            else
+            {
+                responseMessage = "Error: " + response.ReasonPhrase;
+            }
+        }
+        catch (Exception ex)
+        {
+            responseMessage = "Exception: " + ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
     }
 
     public class MerchItem
@@ -89,5 +143,12 @@
         public string Description { get; set; } = "";
         public decimal Price { get; set; }
         public string ImageUrl { get; set; } = "";
+    }
+
+    private class CheckoutResponse
+    {
+        public string sessionId { get; set; }
+        public string returnUrl { get; set; }
+        public string checkoutUrl { get; set; }
     }
 } 
