@@ -6,7 +6,7 @@
 <div class="booking-container">
     <div class="day-navigation">
         <button class="nav-btn" @onclick="PreviousDay" disabled="@(selectedDate.Date <= DateTime.Now.Date)">
-            <i class="bi bi-chevron-double-left"></i> Previous Day
+            <i class="bi bi-chevron-double-left"></i>
         </button>
         <div class="date-display">
             <h3 class="current-day">@selectedDate.ToString("dddd, MMMM d, yyyy")</h3>
@@ -22,7 +22,7 @@
             </div>
         </div>
         <button class="nav-btn" @onclick="NextDay" disabled="@(selectedDate.Date >= DateTime.Now.Date.AddDays(7))">
-            Next Day <i class="bi bi-chevron-double-right"></i>
+            <i class="bi bi-chevron-double-right"></i>
         </button>
     </div>
 

@@ -1,46 +1,49 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 
-<div class="nav-container">
+<div class="nav-container @(_isCollapsed ? "collapsed" : "")">
     <div class="nav-brand">
         @* <i class="bi bi-heart-pulse"></i> *@
         <span>FitTrack</span>
+        <button type="button" class="nav-toggle" @onclick="ToggleNav">
+            <i class="bi @(_isCollapsed ? "bi-chevron-down" : "bi-chevron-up")"></i>
+        </button>
     </div>
 
     <nav class="nav-menu">
         <div class="nav-section">
             <div class="nav-item">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <i class="bi bi-house"></i>
                     <span>Home</span>
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="exercises">
-                    @* <i class="bi bi-activity"></i> *@
+                    <i class="bi bi-activity"></i>
                     <span>Tracker</span>
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="class-booking">
-                    @* <i class="bi bi-calendar-check"></i> *@
-                    @* <span>Class Booking</span> *@
+                    <i class="bi bi-calendar-check"></i>
                     <span>Booking</span>
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="events">
-                    @* <i class="bi bi-trophy"></i> *@
+                    <i class="bi bi-trophy"></i>
                     <span>Events</span>
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="merchandise">
-                    @* <i class="bi bi-bag"></i> *@
+                    <i class="bi bi-bag"></i>
                     <span>Merchandise</span>
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="settings">
-                    @* <i class="bi bi-gear"></i> *@
+                    <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </NavLink>
             </div>
@@ -74,6 +77,15 @@
     </nav>
 </div>
 
+@code {
+    private bool _isCollapsed = false;
+
+    private void ToggleNav()
+    {
+        _isCollapsed = !_isCollapsed;
+    }
+}
+
 <style>
     .nav-link {
         display: flex !important;
@@ -94,5 +106,27 @@
 
     .nav-link:hover {
         color: #007bff !important;
+    }
+
+    .nav-toggle {
+        background: #f8f9fa !important;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 4px !important;
+        padding: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .nav-toggle:hover {
+        background: #e9ecef !important;
+        border-color: #ced4da !important;
+    }
+
+    .nav-toggle i {
+        font-size: 1.2rem !important;
+        color: #495057 !important;
     }
 </style>
